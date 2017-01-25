@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "pg": "^6.1.2",
-    "pg-pubsub": "^0.3.0"
+    "pg-pubsub": "^0.3.0",
+    "redis": "^2.6.5"
   }
 }

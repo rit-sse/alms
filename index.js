@@ -1,6 +1,7 @@
 const PGPubsub = require('pg-pubsub'),
     pg = require('pg'),
-    fs = require('fs')
+    fs = require('fs'),
+    redis = require('redis')
 ;
 
 // Build postgres connection string from environment
@@ -11,6 +12,7 @@ const HOST = process.env.DB_HOST_OVERRIDE || 'pg';
 const CONN = `postgres://${USER}:${PASSWORD}@${HOST}:5432/${DB}`;
 
 const client = new pg.Client(CONN);
+const redisClient = redis.createClient('redis://redis:6379');
 
 client.connect((err) => {
     if (!err) {
@@ -19,9 +21,7 @@ client.connect((err) => {
             if (!err) {
                 client.end((err) => {
                     if (!err) {
-                        subscribeEventChanges((payload) => {
-                            console.log(payload);
-                        });
+                        subscribeEventChanges();
                     } else error(err);
                 });
             } else error(err);
@@ -34,9 +34,11 @@ function error(err) {
     process.exit(1);
 }
 
-function subscribeEventChanges(cb) {
+function subscribeEventChanges() {
     const pubsubInstance = new PGPubsub(CONN);
     pubsubInstance.addChannel('ssevents', (payload) => {
-        cb(payload);
+        const encoded = JSON.stringify(payload);
+        console.log('Recieved: ' + encoded);
+        redisClient.publish('events', encoded);
     });
 }
