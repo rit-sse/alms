@@ -6,4 +6,4 @@ RUN npm install --warn
 
 COPY ./ /app
 
-CMD node index.js
+CMD npm start

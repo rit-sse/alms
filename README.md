@@ -1,2 +1,2 @@
 # alms
-Simple listener for changes on the Events table in node-api
+Simple listener for changes on Events, Membership, and Quotes tables in node-api
