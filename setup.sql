@@ -19,7 +19,7 @@ drop trigger if exists quote_after on quotes;
 drop trigger if exists membership_after on memberships;
 
 create trigger event_after
-    after insert or update
+    after insert
 on events
 for each row
     execute procedure table_change('events', 'ssevents');
