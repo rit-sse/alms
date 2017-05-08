@@ -6,4 +6,4 @@ RUN npm install --warn
 
 COPY ./ /app
 
-CMD npm start
+ENTRYPOINT ["/app/entrypoint.sh"]

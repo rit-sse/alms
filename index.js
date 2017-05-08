@@ -5,10 +5,10 @@ const PGPubsub = require('pg-pubsub'),
 ;
 
 // Build postgres connection string from environment
-const USER = process.env.PG_ENV_POSTGRES_USER || 'postgres';
-const PASSWORD = process.env.PG_ENV_POSTGRES_PASSWORD;
-const DB = process.env.pg_ENV_POSTGRES_DB || USER;
-const HOST = process.env.DB_HOST_OVERRIDE || 'pg';
+const USER = process.env.POSTGRES_USER || 'postgres';
+const PASSWORD = process.env.POSTGRES_PASSWORD;
+const DB = process.env.POSTGRES_DB || USER;
+const HOST = process.env.DB_HOST_OVERRIDE || 'postgres';
 const CONN = `postgres://${USER}:${PASSWORD}@${HOST}:5432/${DB}`;
 
 const client = new pg.Client(CONN);
