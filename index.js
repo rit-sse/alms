@@ -39,6 +39,7 @@ function subscribeTableChanges() {
   pubsubInstance.addChannel('ssevents', handleAddChannel('events'));
   pubsubInstance.addChannel('ssequotes', handleAddChannel('quotes'));
   pubsubInstance.addChannel('ssememberships', handleAddChannel('memberships'));
+  pubsubInstance.addChannel('officers', handleAddChannel('officers'));
 }
 
 function handleAddChannel(channel) {
