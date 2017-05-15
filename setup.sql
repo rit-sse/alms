@@ -17,6 +17,7 @@ $BODY$
 drop trigger if exists event_after on events;
 drop trigger if exists quote_after on quotes;
 drop trigger if exists membership_after on memberships;
+drop trigger if exists officers_every on officers;
 
 create trigger event_after
     after insert
@@ -36,3 +37,8 @@ on memberships
 for each row
     execute procedure table_change('memberships', 'ssememberships');
 
+create trigger officers_every
+    after insert, update
+    on officers
+    for each row
+    execute procedure table_change('officers', 'officers');
