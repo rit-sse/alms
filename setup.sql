@@ -38,7 +38,7 @@ for each row
     execute procedure table_change('memberships', 'ssememberships');
 
 create trigger officers_every
-    after insert, update
+    after insert or update
     on officers
     for each row
     execute procedure table_change('officers', 'officers');
