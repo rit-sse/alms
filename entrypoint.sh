@@ -24,4 +24,5 @@ file_env() {
 
 file_env 'POSTGRES_PASSWORD'
 
-npm start
+# Start
+alms

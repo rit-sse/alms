@@ -1,9 +1,7 @@
-FROM node:6.4
+FROM python:3-onbuild
 
-WORKDIR /app
-COPY ./package.json /app/package.json
-RUN npm install --warn
+COPY ./ /usr/src/app
 
-COPY ./ /app
+RUN pip install .
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
