@@ -45,12 +45,16 @@ class DBListener(Thread):
         self.q = q
         self.registerTriggers()
 
+    @staticmethod
+    def triggerInsertSQL(c):
+        return "create trigger {0}_after after insert on {0} for each row execute procedure table_change('{0}', '{0}');".format(c)
+
     def registerTriggers(self):
         logger.info("Registering table triggers for %s", self.channel)
         with getDBConn() as conn:
             cur = conn.cursor()
             cur.execute("drop trigger if exists {0}_after on {0};".format(self.channel))
-            cur.execute("create trigger {0}_after after insert on {0} for each row execute procedure table_change('{0}', '{0}');".format(self.channel))
+            cur.execute(self.triggerInsertSQL(self.channel))
 
     def run(self):
         cnn = getDBConn()
