@@ -7,4 +7,6 @@ services:
       - POSTGRES_PASSWORD=notreall
 
   rabbit:
-    image: rabbitmq
+    image: rabbitmq:3.6.9-management-alpine
+    ports:
+      - 15672:15672

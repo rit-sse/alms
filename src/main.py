@@ -7,6 +7,7 @@ from eventlet.hubs import trampoline
 from threading import Thread
 import logging
 import sys
+import pika
 
 logging.basicConfig(stream=sys.stdout)
 logger = logging.getLogger("alms")
@@ -42,6 +43,33 @@ def setupTableTriggerFunction():
     conn.close()
 
 
+class EventPublisher(Thread):
+    def __init__(self, q, queues):
+        Thread.__init__(self)
+        self.registerRabbitExchange(queues)
+        self.q = q
+
+    def registerRabbitExchange(self, queues):
+        logger.info("Setting up rabbit exchange")
+        # TODO: handle connection dropping
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters("rabbit"))
+        self.channel = self.connection.channel()
+        self.channel.exchange_declare(exchange='alms', type='direct', durable=True)
+
+    def publishEvent(self, chan, payload):
+        logger.info(" %s <- size(%s)", str(chan), len(payload))
+        if self.connection.is_closed:
+            logger.info("Reconnecting to rabbit")
+            self.connectin.connect()
+        self.channel.basic_publish(exchange='alms', routing_key=chan, body=payload)
+
+    def run(self):
+        while True:
+            if not self.q.empty():
+                e = self.q.get()
+                self.publishEvent(e.channel, e.payload)
+
+
 class DBListener(Thread):
     def __init__(self, channel, q):
         Thread.__init__(self)
@@ -69,24 +97,21 @@ class DBListener(Thread):
                 self.q.put(n)
 
 
-def publishEvent(chan, payload):
-    logger.info(" %s <- size(%s)", str(chan), len(payload))
-
-
 def main():
-    # setup
+    # subscribers
+    subs = ["officers", "events", "memberships", "quotes"]
+
+    # trigger setup
     setupTableTriggerFunction()
 
     # event queue
     dbevents = Queue()
 
-    for chan in ["officers", "events", "memberships", "quotes"]:
+    # rabbit publisher
+    rabbit = EventPublisher(dbevents, subs)
+    rabbit.start()
+
+    # Start listeners
+    for chan in subs:
         listener = DBListener(chan, dbevents)
         listener.start()
-
-    while True:
-        if not dbevents.empty():
-            e = dbevents.get()
-            publishEvent(e.channel, e.payload)
-
-    print("Hello")
