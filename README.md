@@ -23,3 +23,12 @@ This config will have to be updated if you want more events.
 
 ### RabbitMQ configuration
 Alms will publish to the alms exchange, it's a direct exchange meaning that the routing key has to match exactly. The routing key is just the table name. If you want events to be durable they need to go into a queue somewhere, by binding the queue to the exchange you can keep recieving messages even if your app isn't running, then dequeue them on next start up.
+
+# install alms with source linking
+pip install -e .
+
+# hack away and test
+alms
+```
+
+You can view service logs by running `docker-compose -f docker-compose.dev.yml logs -f`. If you want to get into a psql you can run `docker exec -it alms_postgres_1 psql`.
