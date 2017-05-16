@@ -6,12 +6,12 @@ logger = logging.getLogger("alms")
 
 
 class EventPublisher(Thread):
-    def __init__(self, q, queues):
+    def __init__(self, q):
         Thread.__init__(self)
-        self.registerRabbitExchange(queues)
+        self.registerRabbitExchange()
         self.q = q
 
-    def registerRabbitExchange(self, queues):
+    def registerRabbitExchange(self):
         logger.info("Setting up rabbit exchange")
         # TODO: handle connection dropping
         self.connection = pika.BlockingConnection(pika.ConnectionParameters("rabbit"))

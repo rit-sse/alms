@@ -1,8 +1,9 @@
 from queue import Queue
 import logging
 import sys
-from .listeners import DBListener, getDBConn, setupTableTriggerFunction
+from .listeners import DBListener, setupTableTriggerFunction
 from .publisher import EventPublisher
+import yaml
 
 logging.basicConfig(stream=sys.stdout)
 logger = logging.getLogger("alms")
@@ -10,8 +11,11 @@ logger.setLevel(logging.INFO)
 
 
 def main():
-    # subscribers
-    subs = ["officers", "events", "memberships", "quotes"]
+    try:
+        with open('./config.yml', 'r') as conf:
+            config = yaml.load(conf.read())
+    except e:
+        print('Do you have a config.yml?')
 
     # trigger setup
     setupTableTriggerFunction()
@@ -20,10 +24,10 @@ def main():
     dbevents = Queue()
 
     # rabbit publisher
-    rabbit = EventPublisher(dbevents, subs)
+    rabbit = EventPublisher(dbevents)
     rabbit.start()
 
     # Start listeners
-    for chan in subs:
-        listener = DBListener(chan, dbevents)
+    for channel in config['tables']:
+        listener = DBListener(channel, config['tables'][channel], dbevents)
         listener.start()

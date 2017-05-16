@@ -1,0 +1,10 @@
+tables:
+  officers:
+    - insert
+    - update
+  events:
+    - insert
+  memberships:
+    - insert
+  quotes:
+    - insert
