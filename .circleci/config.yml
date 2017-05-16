@@ -1,0 +1,34 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: docker:17.03.0-ce
+    working_directory: /Alms
+    branches:
+      only:
+        - rewrite
+    steps:
+      - setup_remote_docker
+      - run:
+          name: Show Info
+          command: |
+            docker version
+            docker info
+      - checkout
+      - run:
+          name: Build the current image
+          command: |
+            TAG=build
+            docker build -f Dockerfile -t ritsse/alms:$TAG .
+      - run:
+          name: Distribute
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            if [ "${CIRCLE_BRANCH}" == "rewrite" ]; then
+                TAG=2.0
+                docker tag ritsse/alms:build ritsse/alms:dev-latest
+                docker tag ritsse/alms:build ritsse/alms:$TAG
+                docker push ritsse/alms:$TAG
+                docker push ritsse/alms:latest
+            fi
