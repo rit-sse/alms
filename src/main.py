@@ -24,7 +24,8 @@ def main():
     dbevents = Queue()
 
     # rabbit publisher
-    rabbit = EventPublisher(dbevents)
+    rabbit = EventPublisher(dbevents, 'amqp://guest:guest@rabbit/?connection_attempts=3&heartbeat_interval=3600')
+    logger.info("starting publishing")
     rabbit.start()
 
     # Start listeners

@@ -67,4 +67,5 @@ class DBListener(Thread):
             cnn.poll()
             while cnn.notifies:
                 n = cnn.notifies.pop()
+                logger.info(" %s <- size(%s)", str(n.channel), len(n.payload))
                 self.q.put(n)
