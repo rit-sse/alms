@@ -5,9 +5,6 @@ jobs:
     docker:
       - image: docker:17.03.0-ce
     working_directory: /Alms
-    branches:
-      only:
-        - rewrite
     steps:
       - setup_remote_docker
       - run:
@@ -25,10 +22,12 @@ jobs:
           name: Distribute
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            if [ "${CIRCLE_BRANCH}" == "rewrite" ]; then
-                TAG=2.0
-                docker tag ritsse/alms:build ritsse/alms:dev-latest
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+                TAG=2.0.${CIRCLE_BUILD_NUM}
+                docker tag ritsse/alms:build ritsse/alms:latest
+                docker tag ritsse/alms:build ritsse/alms:2.0
                 docker tag ritsse/alms:build ritsse/alms:$TAG
                 docker push ritsse/alms:$TAG
-                docker push ritsse/alms:dev-latest
+                docker push ritsse/alms:2.0
+                docker push ritsse/alms:latest
             fi
