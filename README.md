@@ -23,6 +23,3 @@ This config will have to be updated if you want more events.
 
 ### RabbitMQ configuration
 Alms will publish to the alms exchange, it's a direct exchange meaning that the routing key has to match exactly. The routing key is just the table name. If you want events to be durable they need to go into a queue somewhere, by binding the queue to the exchange you can keep recieving messages even if your app isn't running, then dequeue them on next start up.
-
-### RabbitMQ configuration
-Alms will publish to the alms exchange, it's a direct exchange meaning that the routing key has to match exactly. The routing key is just the table name. If you want events to be durable they need to go into a queue somewhere, by binding the queue to the exchange you can keep recieving messages even if your app isn't running, then dequeue them on next start up.
