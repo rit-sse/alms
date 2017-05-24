@@ -14,7 +14,7 @@ def main():
     try:
         with open('./config.yml', 'r') as conf:
             config = yaml.load(conf.read())
-    except e:
+    except Exception:
         print('Do you have a config.yml?')
 
     # trigger setup

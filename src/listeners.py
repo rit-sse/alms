@@ -2,9 +2,9 @@ import os
 from box import Box
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-from eventlet.hubs import trampoline
 from threading import Thread
 import logging
+import time
 
 logger = logging.getLogger("alms")
 
@@ -24,17 +24,20 @@ def setupTableTriggerFunction():
 
 def getConfig():
     return Box({
-        "dbpass": os.environ.get("POSTGRES_PASSWORD")
+        "dbname":"postgres",
+        "user": "postgres",
+        "dbpass": os.environ.get("POSTGRES_PASSWORD"),
+        "host": "postgres"
     })
 
 
 def getDBConn():
     config = getConfig()
     return psycopg2.connect(
-        dbname="postgres",
-        user="postgres",
+        dbname=config.dbname,
+        user=config.user,
         password=config.dbpass,
-        host="postgres"
+        host=config.host
     )
 
 
@@ -62,8 +65,8 @@ class DBListener(Thread):
         cnn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cur = cnn.cursor()
         cur.execute("LISTEN {};".format(self.channel))
-        while 1:
-            trampoline(cnn, read=True)
+        while True:
+            time.sleep(5)
             cnn.poll()
             while cnn.notifies:
                 n = cnn.notifies.pop()
